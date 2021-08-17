@@ -16,14 +16,18 @@ class PlayerStats:
 
         # parallel?
         for value in output:
-            if "/international" in value.text:
+            if "/players" not in value.text or "international" in value.text:
                 continue
+            print(value.text)
             common_url = "https://www.basketball-reference.com/"
             main_url = common_url + value.text
             new_response = requests.get(main_url)
             new_soup = bs4.BeautifulSoup(new_response.text, 'html.parser')
             name = new_soup.find_all('h1', {'itemprop': 'name'})[0].text
             self.__players.append(Player(name.strip('\n'), main_url))
+
+        if len(self.__players) == 0:
+            raise ValueError('Player Does Not Exist')
         return self.__players
 
 
