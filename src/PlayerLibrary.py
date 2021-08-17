@@ -11,6 +11,8 @@ class PlayerStats:
         search_url = "https://www.basketball-reference.com/search/search.fcgi?search="
         full_url = search_url + name
         response = requests.get(full_url)
+        if response.status_code != 200:
+            raise ValueError('Player Does Not Exist')
         soup = bs4.BeautifulSoup(response.text, 'html.parser')
         output = soup.find_all('div', {'class': 'search-item-url'})
 
@@ -18,7 +20,6 @@ class PlayerStats:
         for value in output:
             if "/players" not in value.text or "international" in value.text:
                 continue
-            print(value.text)
             common_url = "https://www.basketball-reference.com/"
             main_url = common_url + value.text
             new_response = requests.get(main_url)

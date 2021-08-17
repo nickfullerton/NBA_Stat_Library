@@ -1,7 +1,7 @@
 from src.PlayerLibrary import *
 
 player = PlayerStats()
-players = player.GetPlayer("Bobby boo")
+players = player.GetPlayer("Michael Jordan")
 
 
 print(players[0].GetName())  # Returns Str, The player's name
