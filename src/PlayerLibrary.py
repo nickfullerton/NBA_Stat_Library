@@ -49,6 +49,8 @@ class Player:
 
     def __SetStats(self):
         req = requests.get(self.__url)
+        if req.status_code != 200:
+            raise ValueError('Player Does Not Exist')
         urlSoup = bs4.BeautifulSoup(req.text, 'html.parser')
         table = urlSoup.find_all('table')
         seasons_reg = table[0].find_all('tr', {'class': 'full_table'})
