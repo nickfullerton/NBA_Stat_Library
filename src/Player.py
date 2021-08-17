@@ -1,4 +1,5 @@
 import bs4, requests
+import re
 
 class Player:
 
@@ -9,6 +10,8 @@ class Player:
         self.__playoff = {}
         self.__years = []
         self.__yearsPlayoffs = []
+        self.__achievements = []
+        self.__info = []
 
         self.__SetStats()
         self.__SetYears()
@@ -19,15 +22,26 @@ class Player:
         table = urlSoup.find_all('table')
         seasons_reg = table[0].find_all('tr', {'class': 'full_table'})
         seasons_playoff = table[1].find_all('tr', {'class': 'full_table'})
-        reg_career = table[0].find('tfoot')
-        reg_career = reg_career.find_all('td')
-        playoff_career = table[1].find('tfoot')
-        playoff_career = playoff_career.find_all('td')
+        reg_career = table[0].find('tfoot').find_all('td')
+        playoff_career = table[1].find('tfoot').find_all('td')
         self.__FillStats(seasons_reg, seasons_playoff, reg_career, playoff_career)
+
+        achievements = urlSoup.find('ul', {'id':'bling'}).find_all('li')
+        for value in achievements:
+            self.__achievements.append(value.text)
+
+        personal = urlSoup.find('div', {'id': 'meta'}).find_all('p')
+
+        for value in personal:
+            text = value.text
+            new_text = ''.join(text.split())
+            for item in new_text.split('▪'):
+                self.__info.append(item.split(':'))
 
     def __SetYears(self):
         for key in self.__stats:
             self.__years.append(key)
+
         for key in self.__playoff:
             self.__yearsPlayoffs.append(key)
 
@@ -91,3 +105,9 @@ class Player:
 
     def GetPlayoffYears(self):
         return self.__yearsPlayoffs
+
+    def GetAchievements(self):
+        return self.__achievements
+
+    def GetInfo(self):
+        return self.__info
